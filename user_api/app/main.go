@@ -2,7 +2,6 @@ package main
 
 import (
 	"database/sql"
-	"efishery_test/user_api/handler"
 	"fmt"
 	"log"
 	"net/http"
@@ -14,6 +13,11 @@ import (
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/joeshaw/envdecode"
 	"github.com/subosito/gotenv"
+
+	"efishery_test/user_api/delivery"
+	"efishery_test/user_api/handler"
+	"efishery_test/user_api/repository"
+	"efishery_test/user_api/usecase"
 )
 
 type Config struct {
@@ -62,13 +66,17 @@ func NewMysqlConnection(c *Config) (*sql.DB, error) {
 }
 
 func main() {
-	_, err := NewMysqlConnection(&config)
+	db, err := NewMysqlConnection(&config)
 
 	if err != nil {
 		log.Fatal("error connecting to mysql server: ", err)
 	}
 
-	h := handler.NewHandler(config.JWTPrivateKey)
+	userRepo := repository.NewMysqlUser(db)
+	uuc := usecase.NewUserUsecase(&usecase.UserProvider{UserRepository: userRepo})
+	uh := delivery.NewUserHandler(uuc)
+
+	h := handler.NewHandler(config.JWTPrivateKey, &uh)
 
 	s := &http.Server{
 		Addr:         fmt.Sprintf(":%s", config.Port),
