@@ -1,25 +1,30 @@
 package entity
 
 import (
+	"fmt"
+	"regexp"
 	"strings"
 	"time"
 
 	"github.com/dgrijalva/jwt-go"
 )
 
-// AuthCredentials stores user authentication credentials
 type AuthCredentials struct {
 	Phone    string `json:"phone"`
 	Password string `json:"password"`
 }
 
-// Normalize is a method to normalize all field values
 func (a *AuthCredentials) Normalize() {
-	a.Phone = strings.TrimSpace(a.Phone)
+	a.Phone = regexp.MustCompile(`\D`).ReplaceAllString(strings.TrimSpace(a.Phone), "")
+	r := regexp.MustCompile("^0+")
+	if r.MatchString(a.Phone) {
+		a.Phone = r.ReplaceAllString(a.Phone, "")
+		a.Phone = fmt.Sprintf("62%s", a.Phone)
+	}
+
 	a.Password = strings.TrimSpace(a.Password)
 }
 
-// ResourceClaims for claims
 type ResourceClaims struct {
 	ID           int64     `json:"id"`
 	Name         string    `json:"name"`
@@ -29,7 +34,6 @@ type ResourceClaims struct {
 	jwt.StandardClaims
 }
 
-// AuthResponse is our structure for token response after user authentication
 type AuthResponse struct {
 	Token     string    `json:"token"`
 	CreatedAt time.Time `json:"created_at"`

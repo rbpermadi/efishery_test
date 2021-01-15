@@ -76,7 +76,13 @@ func main() {
 	uuc := usecase.NewUserUsecase(&usecase.UserProvider{UserRepository: userRepo})
 	uh := delivery.NewUserHandler(uuc)
 
-	h := handler.NewHandler(config.JWTPrivateKey, &uh)
+	auc := usecase.NewAuthUsecase(&usecase.AuthProvider{
+		UserRepository: userRepo,
+		JWTPrivateKey:  config.JWTPrivateKey,
+	})
+	ah := delivery.NewAuthHandler(auc)
+
+	h := handler.NewHandler(config.JWTPrivateKey, &uh, &ah)
 
 	s := &http.Server{
 		Addr:         fmt.Sprintf(":%s", config.Port),

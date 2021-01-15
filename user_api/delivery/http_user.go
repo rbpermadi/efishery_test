@@ -25,6 +25,7 @@ func (h *UserHandler) RegisterHandler(r *httprouter.Router) error {
 	}
 
 	r.POST("/users", handler.Decorate(h.Register, handler.AppAuth...))
+	r.GET("/me", handler.Decorate(h.GetMe, handler.UserAuth...))
 
 	return nil
 }
@@ -46,5 +47,19 @@ func (h *UserHandler) Register(w http.ResponseWriter, r *http.Request, _ httprou
 	}
 
 	user_api.Created(w, publicUser, "")
+	return nil
+}
+
+func (h *UserHandler) GetMe(w http.ResponseWriter, r *http.Request, _ httprouter.Params) error {
+	ctx := r.Context()
+	claims := user_api.MetaFromContext(ctx)
+
+	user, err := h.uc.GetUser(ctx, claims.ID)
+	if err != nil {
+		user_api.Error(w, err)
+		return err
+	}
+
+	user_api.OK(w, user, "")
 	return nil
 }

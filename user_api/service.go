@@ -17,3 +17,8 @@ type UserUsecase interface {
 	Register(ctx context.Context, user *entity.User) (*entity.UserForRegisterResponse, error)
 	GetUser(ctx context.Context, ID int64) (*entity.UserPublic, error)
 }
+
+// AuthUsecase is a contract for usecase related to authentication
+type AuthUsecase interface {
+	AuthenticateUser(ctx context.Context, auth *entity.AuthCredentials) (*entity.AuthResponse, error)
+}
