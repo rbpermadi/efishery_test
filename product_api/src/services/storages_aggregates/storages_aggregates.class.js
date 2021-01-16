@@ -48,7 +48,7 @@ exports.StoragesAggregates = class StoragesAggregates {
               }
               temp.value.count++
               temp.value.total += price
-              temp.value.med = (temp.value.max + temp.value.min)/2
+              temp.value.median = (temp.value.max + temp.value.min)/2
               temp.value.avg = temp.value.total / temp.value.count
 
               provinceAggs.set(key, temp)
@@ -60,7 +60,7 @@ exports.StoragesAggregates = class StoragesAggregates {
                   value: {
                     min: price,
                     max: price,
-                    med: price,
+                    median: price,
                     avg: price,
                     total: price,
                     count: 1,
@@ -83,7 +83,7 @@ exports.StoragesAggregates = class StoragesAggregates {
               }
               temp.value.count++
               temp.value.total += price
-              temp.value.med = (temp.value.max + temp.value.min)/2
+              temp.value.median = (temp.value.max + temp.value.min)/2
               temp.value.avg = temp.value.total / temp.value.count
 
               weeklyAggs.set(weeklyRange, temp)
@@ -95,7 +95,7 @@ exports.StoragesAggregates = class StoragesAggregates {
                   value: {
                     min: price,
                     max: price,
-                    med: price,
+                    median: price,
                     avg: price,
                     total: price,
                     count: 1,
