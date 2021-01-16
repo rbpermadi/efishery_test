@@ -1,0 +1,334 @@
+openapi: 3.0.0
+info:
+  title: Efishery Test User API
+  description: This is the complete definitions and documentations for Efishery Test User API
+  contact:
+    email: rojali.budi.permadi@gmail.com
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  version: 1.0.0
+servers:
+- url: http://localhost:7171
+  description: Efishery Test User production API
+tags:
+- name: users
+  description: Operations related to User resource
+- name: authentication
+  description: Operations for authentication
+paths:
+  /users:
+    post:
+      tags:
+      - users
+      summary: register a new user
+      description: Register a new user to the system
+      operationId: createUser
+      requestBody:
+        description: User data to be submitted to registration
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UsersForm'
+      responses:
+        201:
+          description: user successfully created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_201'
+        400:
+          description: missing required fields
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_400'
+  /me:
+    get:
+      tags:
+      - users
+      summary: get my data
+      description: |
+        Get the logged in user data
+      operationId: getMe
+      responses:
+        200:
+          description: data found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_200'
+        401:
+          description: unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_401'
+      security:
+      - bearerAuth: []
+  /auth:
+    post:
+      tags:
+      - authentication
+      summary: authenticate user and create their session token
+      description: |
+        Authenticate user by phone and password and return a JWT token for them
+      operationId: authenticate
+      requestBody:
+        description: Authentication data
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AuthForm'
+      responses:
+        200:
+          description: user successfully logged in
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_200_1'
+        400:
+          description: missing required fields
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_400'
+        401:
+          description: invalid credentials
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_401_1'
+components:
+  schemas:
+    MetaDefault:
+      type: object
+      properties:
+        status:
+          type: number
+          example: 200
+    MetaCreated:
+      type: object
+      properties:
+        status:
+          type: number
+          example: 201
+    UsersRegister:
+      required:
+      - id
+      - name
+      - phone
+      - password
+      - role
+      - registered_at
+      type: object
+      properties:
+        id:
+          type: number
+          example: 1
+        name:
+          type: string
+          example: Rocky Balboa
+        role:
+          type: string
+          example: admin
+        password:
+          type: string
+          example: abcd
+        registered_at:
+          type: string
+          format: date-time
+        phone:
+          type: string
+          example: "6289612341234"
+    UsersForm:
+      required:
+      - name
+      - role
+      - phone
+      type: object
+      properties:
+        name:
+          type: string
+          example: Rocky Balboa
+        role:
+          type: string
+          example: admin
+        phone:
+          type: string
+          example: "6289612341234"
+    UsersPublic:
+      required:
+      - role
+      - id
+      - image
+      - name
+      - phone
+      - registered_at
+      type: object
+      properties:
+        id:
+          type: number
+          example: 1
+        name:
+          type: string
+          example: Rocky Balboa
+        role:
+          type: string
+          example: admin
+        registered_at:
+          type: string
+          format: date-time
+        phone:
+          type: string
+          example: "6289612341234"
+    AuthResponse:
+      required:
+      - created_at
+      - token
+      type: object
+      properties:
+        token:
+          type: string
+          example: xxxxx.yyyyy.zzzzz
+        created_at:
+          type: string
+          format: date-time
+        expired_at:
+          type: string
+          format: date-time
+    AuthForm:
+      required:
+      - email
+      - password
+      type: object
+      properties:
+        email:
+          type: string
+          example: rockybalboa@gmail.com
+        password:
+          type: string
+          example: rockybalboapetinju
+    inline_response_200:
+      required:
+      - meta
+      - result
+      type: object
+      properties:
+        result:
+          $ref: '#/components/schemas/UsersPublic'
+        meta:
+          $ref: '#/components/schemas/MetaDefault'
+    inline_response_201:
+      required:
+      - meta
+      - result
+      type: object
+      properties:
+        result:
+          $ref: '#/components/schemas/UsersRegister'
+        meta:
+          $ref: '#/components/schemas/MetaCreated'
+    inline_response_200_1:
+      required:
+      - meta
+      - result
+      type: object
+      properties:
+        result:
+          $ref: '#/components/schemas/AuthResponse'
+        meta:
+          $ref: '#/components/schemas/MetaDefault'
+    inline_response_400_error:
+      type: object
+      properties:
+        message:
+          type: string
+          example: Invalid parameter
+        code:
+          type: number
+          example: 400
+    inline_response_400_meta:
+      type: object
+      properties:
+        status:
+          type: number
+          example: 400
+    inline_response_400:
+      required:
+      - error
+      - meta
+      type: object
+      properties:
+        error:
+          $ref: '#/components/schemas/inline_response_400_error'
+        meta:
+          $ref: '#/components/schemas/inline_response_400_meta'
+    inline_response_400_1_error:
+      type: object
+      properties:
+        message:
+          type: string
+          example: Phone 0811111111 sudah digunakan
+        code:
+          type: number
+          example: 400
+    inline_response_400_1:
+      required:
+      - error
+      - meta
+      type: object
+      properties:
+        error:
+          $ref: '#/components/schemas/inline_response_400_1_error'
+        meta:
+          $ref: '#/components/schemas/inline_response_400_meta'
+    inline_response_401_error:
+      type: object
+      properties:
+        message:
+          type: string
+          example: Unauthorized
+        code:
+          type: number
+          example: 401
+    inline_response_401_meta:
+      type: object
+      properties:
+        status:
+          type: number
+          example: 401
+    inline_response_401:
+      required:
+      - error
+      - meta
+      type: object
+      properties:
+        error:
+          $ref: '#/components/schemas/inline_response_401_error'
+        meta:
+          $ref: '#/components/schemas/inline_response_401_meta'
+    inline_response_401_1_error:
+      type: object
+      properties:
+        message:
+          type: string
+          example: Phone atau password salah
+        code:
+          type: number
+          example: 401
+    inline_response_401_1:
+      required:
+      - error
+      - meta
+      type: object
+      properties:
+        error:
+          $ref: '#/components/schemas/inline_response_401_1_error'
+        meta:
+          $ref: '#/components/schemas/inline_response_401_meta'
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT

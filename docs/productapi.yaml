@@ -1,0 +1,326 @@
+openapi: 3.0.0
+info:
+  title: Efishery Test Product API
+  description: This is the complete definitions and documentations for Efishery Test Product API
+  contact:
+    email: rojali.budi.permadi@gmail.com
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  version: 1.0.0
+servers:
+- url: http://localhost:3030
+  description: Efishery Test Product production API
+tags:
+- name: users
+  description: Operations related to User resource
+- name: storages
+  description: Operations related to Storage resource
+- name: storages-aggregates
+  description: Operations related to Storage Aggreates resource
+paths:
+  /me:
+    get:
+      tags:
+      - users
+      summary: get my data
+      description: |
+        Get the logged in user data
+      operationId: getMe
+      responses:
+        200:
+          description: data found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_200'
+        401:
+          description: unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_401'
+      security:
+      - bearerAuth: []
+  /storages:
+    get:
+      tags:
+      - storages
+      summary: fetch all storerages in the system
+      description: |
+        Get all storages from third party
+      operationId: getStorages
+      responses:
+        200:
+          description: data found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_200_1'
+        401:
+          description: unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_401'
+        500:
+          description: internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_500'
+      security:
+      - bearerAuth: []
+  /storages-aggregates:
+    get:
+      tags:
+      - storages-aggregates
+      summary: fetch all storages aggregates in the system
+      description: |
+        Get all storages aggregate
+      operationId: getStoragesAggregates
+      responses:
+        200:
+          description: data found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_200_2'
+        401:
+          description: unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_401'
+        500:
+          description: internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_500'
+      security:
+      - bearerAuth: []
+components:
+  schemas:
+    MetaDefault:
+      type: object
+      properties:
+        status:
+          type: number
+          example: 200
+    UsersPublic:
+      required:
+      - role
+      - id
+      - image
+      - name
+      - phone
+      - registered_at
+      type: object
+      properties:
+        id:
+          type: number
+          example: 1
+        name:
+          type: string
+          example: Rocky Balboa
+        role:
+          type: string
+          example: admin
+        registered_at:
+          type: string
+          format: date-time
+        phone:
+          type: string
+          example: "6289612341234"
+    StoragesPublic:
+      required:
+      - komoditas
+      - area_provinsi
+      - area_kota
+      - size
+      - price
+      - tgl_parsed
+      - timestamp
+      - price_usd
+      - id
+      type: object
+      properties:
+        komoditas:
+          type: string
+          example: Udang Vannamei
+        area_provinsi:
+          type: string
+          example: BANTEN
+        area_kota:
+          type: string
+          example: PANDEGLANG
+        size:
+          type: number
+          example: 30
+        price:
+          type: number
+          example: 20000
+        tgl_parsed:
+          type: string
+          format: date-time
+        timestamp:
+          type: string
+          example: 1590818875
+        price_usd:
+          type: number
+          example: 1.4131949
+        id:
+          type: string
+          example: "a5f89f7d-4175-4773-a5b9-5db73db22794"
+    StoragesAggregatesValue:
+      required:
+      - min
+      - max
+      - med
+      - avg
+      - total
+      - count
+      type: object
+      properties:
+        min:
+          type: number
+          example: 17000
+        max:
+          type: number
+          example: 2000000
+        median:
+          type: number
+          example: 1008500
+        avg:
+          type: number
+          example: 312650
+        total:
+          type: number
+          example: 4377100
+        count:
+          type: number
+          example: 14
+    StoragesAggregatesProvince:
+      required:
+      - key
+      - value
+      type: object
+      properties:
+        key:
+          type: string
+          example: Jawa Barat
+        value:
+          $ref: '#/components/schemas/StoragesAggregatesValue'
+    StoragesAggregatesWeekly:
+      required:
+      - key
+      - value
+      type: object
+      properties:
+        key:
+          type: string
+          example: 20200601_20200607
+        value:
+          $ref: '#/components/schemas/StoragesAggregatesValue'
+    StoragesAggregatesPublic:
+      required:
+      - province
+      - weekly
+      type: object
+      properties:
+        province:
+          type: array
+          items:
+            $ref: '#/components/schemas/StoragesAggregatesProvince'
+        weekly:
+          type: array
+          items:
+            $ref: '#/components/schemas/StoragesAggregatesWeekly'
+    inline_response_200:
+      required:
+      - meta
+      - result
+      type: object
+      properties:
+        result:
+          $ref: '#/components/schemas/UsersPublic'
+        meta:
+          $ref: '#/components/schemas/MetaDefault'
+    inline_response_401_error:
+      type: object
+      properties:
+        message:
+          type: string
+          example: Unauthorized
+        code:
+          type: number
+          example: 401
+    inline_response_401_meta:
+      type: object
+      properties:
+        status:
+          type: number
+          example: 401
+    inline_response_401:
+      required:
+      - error
+      - meta
+      type: object
+      properties:
+        error:
+          $ref: '#/components/schemas/inline_response_401_error'
+        meta:
+          $ref: '#/components/schemas/inline_response_401_meta'
+    inline_response_200_1:
+      required:
+      - meta
+      - result
+      type: object
+      properties:
+        result:
+          type: array
+          items:
+            $ref: '#/components/schemas/StoragesPublic'
+        meta:
+          $ref: '#/components/schemas/MetaDefault'
+    inline_response_500_error:
+      type: object
+      properties:
+        message:
+          type: string
+          example: Internal server error
+        code:
+          type: number
+          example: 500
+    inline_response_500_meta:
+      type: object
+      properties:
+        status:
+          type: number
+          example: 500
+    inline_response_500:
+      required:
+      - error
+      - meta
+      type: object
+      properties:
+        error:
+          $ref: '#/components/schemas/inline_response_500_error'
+        meta:
+          $ref: '#/components/schemas/inline_response_500_meta'
+    inline_response_200_2:
+      required:
+      - meta
+      - result
+      type: object
+      properties:
+        result:
+          $ref: '#/components/schemas/StoragesAggregatesPublic'
+        meta:
+          $ref: '#/components/schemas/MetaDefault'
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
