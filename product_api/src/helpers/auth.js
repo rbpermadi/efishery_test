@@ -16,8 +16,21 @@ module.exports = {
         return context;
       }
       catch(err) {
-        console.log(err)
         throw error.UnauthorizedError();
+      }
+    };
+  },
+
+  isAdmin: () => {
+    return (context) => {
+      try {
+        if (context.params.user.role != "admin") {
+          throw error.UnauthorizedError();
+        }
+        return context
+      }
+      catch(err) {
+        throw err;
       }
     };
   }
