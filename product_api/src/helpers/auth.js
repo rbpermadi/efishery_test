@@ -5,11 +5,13 @@ module.exports = {
   authenticate: () => {
     return (context) => {
       try {
+        const jwtSecretKey = context.app.get("jwt_private_key");
+
         const {headers} = context.params;
 
         const token = headers.authorization.replace('Token ', '');
 
-        const decoded = jwt.verify(token, 'efishery_test');
+        const decoded = jwt.verify(token, jwtSecretKey);
 
         context.params.user = decoded
 
