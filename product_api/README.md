@@ -2,7 +2,7 @@
 
 ## Description
 
-Product Api is a part of repository for Efishery Test Assignment. It's using **NodeJs** as its programming language.
+Product Api is a part of repository for Efishery Test Assignment. Product Api is a product storages web-service that request the data from Efishery API. Product Api also use Currconv Api to get conversion rate and is used to convert from IDR price to USD price. It's using **NodeJs** as its programming language.
 
 ## Onboarding and Development Guide
 
