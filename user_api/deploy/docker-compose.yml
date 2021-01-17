@@ -1,0 +1,18 @@
+version: '2'
+
+services:
+  efishery-user-api:
+    image: rufuskopral/efishery_user_api
+    build: .
+    environment:
+      - ENV=production
+      - APP_PORT=7171
+      - DATABASE_NAME=sql12387471
+      - DATABASE_HOST=sql12.freemysqlhosting.net
+      - DATABASE_PORT=3306
+      - DATABASE_USER=sql12387471
+      - DATABASE_PASSWORD=mM3RIplDDN
+      - DATABASE_POOL=5
+      - JWT_PRIVATE_KEY=+jGJiPGkc3CT3ZH+K0fao6sr+Jo=
+    ports:
+      - "7171:7171"

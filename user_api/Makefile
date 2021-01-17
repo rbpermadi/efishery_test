@@ -1,9 +1,12 @@
 GOOS	 ?= linux
 GOARCH  = amd64
-ODIR    = _output
+ODIR    = deploy/_output
 
 TIMESTAMP = $(shell date +'%Y%m%d%H%M%S')
 PWD			 	= $(shell pwd)
+
+IMAGE_NAME = rufuskopral/efishery_user_api
+VERSION    = $(shell git show -q --format=%h)
 
 export GO111MODULE ?= on
 
@@ -16,10 +19,10 @@ coverage:
 	go tool cover -html=cover.out -o cover.html
 
 bin:
-	go build -o _output/user_api app/main.go
+	go build -o $(ODIR)/user_api app/main.go
 
 run: bin
-	./_output/user_api
+	./$(ODIR)/user_api
 
 mod:
 	go mod tidy
@@ -42,3 +45,9 @@ db-migrate-rollback:
 
 db-seed:
 	docker run --rm -it --network host -v "$(PWD)/db":/app/db -v "$(PWD)/.env":/app/.env rufuskopral/standalone-migration:1.0.0 db:seed
+
+docker-build:compile
+	docker build -t $(IMAGE_NAME) -f ./deploy/Dockerfile .
+
+docker-push:docker-build
+		docker push $(IMAGE_NAME);
