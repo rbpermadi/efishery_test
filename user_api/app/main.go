@@ -31,7 +31,7 @@ type Config struct {
 		Charset  string `env:"DATABASE_CHARSET,default=utf8"`
 	}
 
-	Port string `env:"PORT,required"`
+	Port string `env:"APP_PORT,required"`
 
 	JWTPrivateKey string `env:"JWT_PRIVATE_KEY,required"`
 }
